@@ -124,7 +124,7 @@ void setBrightness(char x[]){
     Serial.println("ERROR:OOB");
     return;
   }
-  analogWrite(stripPins[selectedStrip][color+1],255-b);
+  analogWrite(stripPins[selectedStrip][color+1],b);
   Serial.print("BRIGHT->");
   Serial.println(b);
 }
