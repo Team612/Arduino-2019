@@ -92,7 +92,7 @@ void parseIntInput(){
 void setLedStrip(char x[]){
   int s=atoi(x);
   if(s>0||s<0){
-    Serial.println("ERROR->OOB");
+    s=0;
   }else{
     Serial.print("STRIP->");
     Serial.println(s);
@@ -102,9 +102,10 @@ void setLedStrip(char x[]){
 
 void setColor(char x[]){
   int c=atoi(x);
-  if(c>2||c<0){
-    Serial.println("ERROR->OOB");
-    return;
+  if(c<0){
+    c=0;
+  }else if(c>2){
+    c=2;
   }
   color=c;
   Serial.print("COLOR->");
@@ -120,9 +121,10 @@ void setColor(char x[]){
 
 void setBrightness(char x[]){
   int b=atoi(x);
-  if(b<0||b>255){
-    Serial.println("ERROR:OOB");
-    return;
+  if(b<0){
+    b=0;
+  }else if(b>255){
+    b=255;
   }
   analogWrite(stripPins[selectedStrip][color+1],b);
   Serial.print("BRIGHT->");
