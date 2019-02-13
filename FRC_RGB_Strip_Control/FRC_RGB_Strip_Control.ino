@@ -1,21 +1,21 @@
 #include <Wire.h>
-#define buzzer 12
-const int alertLed=13;
-int jobSwitch=0;
+#define buzzer 12//Define the buzzer port
+const int alertLed=13;//Defines status LED
+int jobSwitch=0;//Decides what command to execute
 int stripCount=1;
 int selectedStrip=0;
 int color=0;
 //power pin,R pin,G pin,B pin
 int stripPins[1][4]={{2,3,5,6}};
 int stripVals[1][4]={{0,0,0}};
-String infoIn="";
-boolean buzz=true;
+String infoIn="";//Stores command
+boolean buzz=true;//Decides whether to beep when command received
 
 void setup() {
  pinMode(alertLed,OUTPUT);
  Serial.begin(9600);
  Serial.println("REC READY");
- Wire.begin(1);//Start I2C as a slave w/ address 1
+ Wire.begin(1);//Start I2C as a slave with address 1
  Wire.onReceive(i2cIn);
  Wire.onRequest(i2cOut);
  //Pin delcarations
@@ -28,7 +28,7 @@ void setup() {
 
 void loop() {}
 
-void i2cIn(int howMany){
+void i2cIn(int howMany){//Receives data from I2C bus and parses it
   alert(400,100,true);
   infoIn="";
   while(Wire.available()>=1){
@@ -44,7 +44,7 @@ void i2cOut(){
   //Might be used later
 }
 
-void parseCommand(){
+void parseCommand(){//Parses command and sets values
   if(jobSwitch>0){
     alert(350,100,true);
     parseIntInput();
