@@ -6,7 +6,7 @@ int stripCount=1;
 int selectedStrip=0;
 int color=0;
 //power pin,R pin,G pin,B pin
-int stripPins[1][4]={{2,3,5,6}};
+int stripPins[1][4]={{3,5,6}};
 int stripVals[1][4]={{0,0,0}};
 String infoIn="";//Stores command
 boolean buzz=true;//Decides whether to beep when command received
@@ -126,7 +126,7 @@ void setBrightness(char x[]){
   }else if(b>255){
     b=255;
   }
-  analogWrite(stripPins[selectedStrip][color+1],b);
+  analogWrite(stripPins[selectedStrip][color],b);
   Serial.print("BRIGHT->");
   Serial.println(b);
 }
