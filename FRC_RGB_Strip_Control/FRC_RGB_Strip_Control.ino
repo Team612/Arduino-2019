@@ -25,8 +25,54 @@ void setup() {
   }
  }
 }
+boolean rainbow=false;
 
-void loop() {}
+void loop() {
+  if(rainbow)doRainbow();
+}
+
+int red=10;
+int green=10;
+int blue=10;
+const int rainbowDelay=15;
+const int minBright=10;
+const int maxBright=175;
+boolean dir=true;
+void doRainbow(){
+  delay(rainbowDelay);
+  if(dir){
+    if(red<maxBright){
+      red++;
+    }else{
+      if(green<maxBright){
+        green++;
+      }else{
+        if(blue<maxBright){
+          blue++;
+        }else{
+          dir=false;
+        }
+      }
+    }
+  }else{
+    if(red>minBright){
+      red--;
+    }else{
+      if(green>minBright){
+        green--;
+      }else{
+        if(blue>minBright){
+          blue--;
+        }else{
+          dir=true;
+        }
+      }
+    }
+  }
+  analogWrite(stripPins[selectedStrip][0],red);
+  analogWrite(stripPins[selectedStrip][1],green);
+  analogWrite(stripPins[selectedStrip][2],blue);
+}
 
 void i2cIn(int howMany){//Receives data from I2C bus and parses it
   alert(400,100,true);
@@ -55,9 +101,11 @@ void parseCommand(){//Parses command and sets values
     jobSwitch=1;
   }else if(infoIn.indexOf("SET_COLOR")>=0){
     Serial.println("COL");
+    rainbow=false;
     jobSwitch=2;
   }else if(infoIn.indexOf("SET_BRIGHT")>=0){
     Serial.println("BRI");
+    rainbow=false;
     jobSwitch=3;
   }else if(infoIn.indexOf("SET_SOUND")>=0){
     Serial.println("SPK");
@@ -65,13 +113,16 @@ void parseCommand(){//Parses command and sets values
   }else if(infoIn.indexOf("PING")>=0){
     Serial.println("PNG");
     if(buzz)alert(300,100,true);
+  }else if(infoIn.indexOf("SET_RAIN")>=0){
+    Serial.println("BOW");
+    jobSwitch=5;
   }else{
     Serial.println("E00");
     alert(200,100,true);
   }
   if(jobSwitch>0)alert(300,100,true);
 }
-
+ 
 void parseIntInput(){
   char x[32];
   infoIn.toCharArray(x,32);
@@ -83,6 +134,8 @@ void parseIntInput(){
     case 3: setBrightness(x);
     break;
     case 4: setSpeaker(x);
+    break;
+    case 5: setRainbow(x);
     break;
   }
   Serial.println("READY");
@@ -139,6 +192,22 @@ void setSpeaker(char x[]){
     Serial.println("OFF");
   }else{
     buzz=true;
+    Serial.println("ON");
+  }
+}
+
+void setRainbow(char x[]){
+  int s=atoi(x);
+  Serial.print("RAINBOW->");
+  if(s<=0){
+    rainbow=false;
+    Serial.println("OFF");
+  }else{
+    dir=true;
+    red=10;
+    blue=10;
+    green=10;
+    rainbow=true;
     Serial.println("ON");
   }
 }
