@@ -34,9 +34,9 @@ void loop() {
 int red=10;
 int green=10;
 int blue=10;
-const int rainbowDelay=15;
-const int minBright=10;
-const int maxBright=175;
+int rainbowDelay=15;
+int minBright=10;
+int maxBright=175;
 boolean dir=true;
 void doRainbow(){
   delay(rainbowDelay);
@@ -116,6 +116,15 @@ void parseCommand(){//Parses command and sets values
   }else if(infoIn.indexOf("SET_RAIN")>=0){
     Serial.println("BOW");
     jobSwitch=5;
+  }else if(infoIn.indexOf("SET_RMAX")>=0){
+    Serial.println("RMaxBright");
+    jobSwitch=6;
+  }else if(infoIn.indexOf("SET_RMIN")>=0){
+    Serial.println("RMinBright");
+    jobSwitch=7;
+  }else if(infoIn.indexOf("SET_RTIME")>=0){
+    Serial.println("RTime");
+    jobSwitch=8;
   }else{
     Serial.println("E00");
     alert(200,100,true);
@@ -137,6 +146,12 @@ void parseIntInput(){
     break;
     case 5: setRainbow(x);
     break;
+    case 6: setMaxRain(x);
+    break;
+    case 7: setMinRain(x);
+    break;
+    case 8: setRainTime(x);
+    break;
   }
   Serial.println("READY");
   jobSwitch=0;
@@ -151,6 +166,16 @@ void setLedStrip(char x[]){
     Serial.println(s);
     selectedStrip=s;
   }
+}
+
+void setRainTime(char x[]){
+  int b=atoi(x);
+  if(b<0){
+    b=0;
+  }
+  rainbowDelay=b;
+  Serial.print("RAIN_TIME->");
+  Serial.println(b);
 }
 
 void setColor(char x[]){
@@ -184,6 +209,30 @@ void setBrightness(char x[]){
   Serial.println(b);
 }
 
+void setMaxRain(char x[]){
+  int b=atoi(x);
+  if(b<0){
+    b=0;
+  }else if(b>255){
+    b=255;
+  }
+  maxBright=b;
+  Serial.print("RAIN_BRIGHT_MAX->");
+  Serial.println(b);
+}
+
+void setMinRain(char x[]){
+  int b=atoi(x);
+  if(b<0){
+    b=0;
+  }else if(b>255){
+    b=255;
+  }
+  minBright=b;
+  Serial.print("RAIN_BRIGHT_MIN->");
+  Serial.println(b);
+}
+
 void setSpeaker(char x[]){
   int s=atoi(x);
   Serial.print("SOUND->");
@@ -201,6 +250,9 @@ void setRainbow(char x[]){
   Serial.print("RAINBOW->");
   if(s<=0){
     rainbow=false;
+    analogWrite(stripPins[selectedStrip][0],0);
+    analogWrite(stripPins[selectedStrip][1],0);
+    analogWrite(stripPins[selectedStrip][2],0);
     Serial.println("OFF");
   }else{
     dir=true;
